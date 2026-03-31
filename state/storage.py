@@ -2,13 +2,17 @@ import json
 import os
 
 FILE_PATH = "tg_bot/user_data.json"
+os.makedirs(os.path.dirname(FILE_PATH), exist_ok=True)
 
 def load_data():
     if not os.path.exists(FILE_PATH):
         return {}
 
-    with open(FILE_PATH, "r", encoding="utf-8") as f:
-        return json.load(f)
+    try:
+        with open(FILE_PATH, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except json.JSONDecodeError:
+        return {}
 
 def save_data(data):
     with open(FILE_PATH, "w", encoding="utf-8") as f:
