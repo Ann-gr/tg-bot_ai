@@ -1,34 +1,50 @@
-import threading
-from flask import Flask
-
+from flask import Flask, request
+from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters
-
+import os
 from config import TOKEN
-from handlers.commands import start, help_command
-from handlers.messages import handle_message
 
-app_flask = Flask(__name__)
+app = Flask(__name__)
+
+# создаём telegram app
+tg_app = ApplicationBuilder().token(TOKEN).build()
 
 
-@app_flask.route("/")
+# handlers
+async def start(update, context):
+    await update.message.reply_text("Бот работает 🚀")
+
+
+async def echo(update, context):
+    await update.message.reply_text(update.message.text)
+
+
+tg_app.add_handler(CommandHandler("start", start))
+tg_app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
+
+
+# webhook endpoint
+@app.route(f"/webhook/{TOKEN}", methods=["POST"])
+def webhook():
+    update = Update.de_json(request.get_json(force=True), tg_app.bot)
+
+    tg_app.create_task(tg_app.process_update(update))
+
+    return "ok"
+
+
+# health check (Render требует)
+@app.route("/", methods=["GET"])
 def home():
-    return "Bot is running!"
+    return "Bot is running"
 
 
-def run_bot():
-    app = ApplicationBuilder().token(TOKEN).build()
-
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("help", help_command))
-    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
-
-    print("Бот запущен...")
-    app.run_polling(drop_pending_updates=True)
+# запуск webhook
+def set_webhook():
+    url = f"https://ai-tg-bot-lf1m.onrender.com/webhook/{TOKEN}"
+    tg_app.bot.set_webhook(url=url)
 
 
 if __name__ == "__main__":
-    # запускаем бота в отдельном потоке
-    threading.Thread(target=run_bot).start()
-
-    # запускаем веб-сервер (Render доволен)
-    app_flask.run(host="0.0.0.0", port=10000)
+    set_webhook()
+    app.run(host="0.0.0.0", port=10000)
