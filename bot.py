@@ -2,39 +2,46 @@ from flask import Flask, request
 from telegram import Update, Bot
 from config import TOKEN
 import os
+import asyncio
 
 app = Flask(__name__)
 bot = Bot(TOKEN)
-
 
 @app.route("/", methods=["GET"])
 def home():
     return "Bot is running"
 
-
 @app.route(f"/webhook/{TOKEN}", methods=["POST"])
 def webhook():
-    data = request.get_json(force=True)
+    try:
+        print("🔥 WEBHOOK HIT")
 
-    update = Update.de_json(data, bot)
+        data = request.get_json(force=True)
+        update = Update.de_json(data, bot)
 
-    print("🔥 UPDATE:", data)
+        if update.message and update.message.text:
+            text = update.message.text
 
-    if update.message:
-        text = update.message.text
+            if text == "/start":
+                asyncio.run(
+                    bot.send_message(
+                        chat_id=update.message.chat.id,
+                        text="Бот работает 🚀"
+                    )
+                )
+            else:
+                asyncio.run(
+                    bot.send_message(
+                        chat_id=update.message.chat.id,
+                        text=f"Ты написал: {text}"
+                    )
+                )
 
-        if text == "/start":
-            bot.send_message(
-                chat_id=update.message.chat.id,
-                text="Бот работает 🚀"
-            )
-        else:
-            bot.send_message(
-                chat_id=update.message.chat.id,
-                text=f"Ты написал: {text}"
-            )
+        return "ok", 200
 
-    return "ok"
+    except Exception as e:
+        print("❌ ERROR:", e)
+        return "error", 200
 
 if __name__ == "__main__":
     print("Starting bot...")
