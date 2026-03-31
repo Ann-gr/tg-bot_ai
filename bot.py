@@ -22,7 +22,9 @@ tg_app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
 # webhook endpoint
 @app.route(f"/webhook/{TOKEN}", methods=["POST"])
 def webhook():
+    print("🔥 WEBHOOK HIT")
     data = request.get_json(force=True)
+    print("DATA:", data)
 
     update = Update.de_json(data, tg_app.bot)
 
