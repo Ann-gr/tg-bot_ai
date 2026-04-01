@@ -18,7 +18,7 @@ def create_prompt(text, mode="analysis", top_n=10, freq_n=10):
         Perform full text analysis.
         Return format:
         📌 Краткое содержание:
-        (2–4 преложения)
+        (2–4 предложения)
 
         📌 Тема:
         (1 строка)

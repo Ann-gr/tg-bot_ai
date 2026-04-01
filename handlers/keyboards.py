@@ -2,7 +2,8 @@ from telegram import ReplyKeyboardMarkup
 def get_main_keyboard():
     keyboard = [
         ["📊 Общий анализ", "📝 Краткое содержание"],
-        ["🔑 Ключевые слова", "📈 Частотный анализ"]
+        ["🔑 Ключевые слова", "📈 Частотный анализ"],
+        ["🧹 Очистить память"]
     ]
 
     return ReplyKeyboardMarkup(

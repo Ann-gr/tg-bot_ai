@@ -38,3 +38,9 @@ def add_message(user_id, role, content):
 def get_history(user_id):
     data = load_data()
     return data.get(str(user_id), {}).get("history", [])
+
+def clear_history(user_id):
+    data = load_data()
+    if str(user_id) in data:
+        data[str(user_id)]["history"] = []
+        save_data(data)

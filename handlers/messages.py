@@ -9,7 +9,7 @@ from utils.formatter import format_response
 # UI (кнопки Telegram)
 from handlers.keyboards import get_main_keyboard, get_number_keyboard
 # работа с памятью пользователя
-from state.user_state import set_user, get_user, add_message, get_history
+from state.user_state import set_user, get_user, add_message, get_history, clear_history
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE): # вызывается на каждое текстовое сообщение
     user_id = update.effective_user.id
@@ -41,6 +41,10 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE): # 
             "Выберите режим 👇",
             reply_markup=get_main_keyboard()
         )
+        return
+    
+    elif text == "🧹 Очистить память":
+        clear_history(user_id)
         return
 
     state = get_user(user_id) # получаем состояние пользователя
@@ -85,13 +89,13 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE): # 
         freq_n=state.get("freq_n", 10)
     )
 
-    add_message(user_id, "user", prompt)
+    add_message(user_id, "user", text)
 
     history = get_history(user_id)
     print("HISTORY:", get_history(user_id))
 
     messages = [
-        {"role": "system", "content": "Ты полезный AI-ассистент для анализа текста"}
+        {"role": "system", "content": prompt}
     ] + history
 
     try:
