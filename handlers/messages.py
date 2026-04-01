@@ -61,7 +61,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE): # 
     elif text == "🧹 Очистить память":
         clear_history(user_id)
         await update.message.reply_text(
-            "Память очищена ✅\n\nВыберите режим 👇",
+            "Память очищена ✅\n\nТеперь я ничего не помню о прошлом диалоге 🙂",
             reply_markup=get_main_keyboard()
         )
         return
