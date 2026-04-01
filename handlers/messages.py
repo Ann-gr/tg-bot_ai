@@ -9,7 +9,7 @@ from utils.formatter import format_response
 # UI (кнопки Telegram)
 from handlers.keyboards import get_main_keyboard, get_number_keyboard
 # работа с памятью пользователя
-from state.user_state import add_message, get_history
+from state.user_state import set_user, get_user, add_message, get_history
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE): # вызывается на каждое текстовое сообщение
     user_id = update.effective_user.id
@@ -89,7 +89,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE): # 
 
     history = get_history(user_id)
     print("HISTORY:", get_history(user_id))
-    
+
     messages = [
         {"role": "system", "content": "Ты полезный AI-ассистент для анализа текста"}
     ] + history

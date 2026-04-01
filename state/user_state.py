@@ -1,6 +1,24 @@
 from state.storage import load_data, save_data
 
-# добавляем сообщение в историю
+
+# STATE (режимы, настройки)
+
+def get_user(user_id):
+    data = load_data()
+    return data.get(str(user_id), {}).get("state", {})
+
+
+def set_user(user_id, state):
+    data = load_data()
+
+    user = data.setdefault(str(user_id), {})
+    user["state"] = state
+
+    save_data(data)
+
+
+# HISTORY (память диалога)
+
 def add_message(user_id, role, content):
     data = load_data()
 
@@ -12,12 +30,11 @@ def add_message(user_id, role, content):
         "content": content
     })
 
-    # ограничиваем историю до 10 сообщений
-    user["history"] = history[-10:]
+    user["history"] = history[-10:]  # ограничение
 
     save_data(data)
 
-# получаем историю сообщений
+
 def get_history(user_id):
     data = load_data()
     return data.get(str(user_id), {}).get("history", [])
