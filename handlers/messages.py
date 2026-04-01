@@ -9,7 +9,7 @@ from utils.formatter import format_response
 # UI (кнопки Telegram)
 from handlers.keyboards import get_main_keyboard, get_number_keyboard
 # работа с памятью пользователя
-from state.user_state import user_state, get_user, set_user
+from state.user_state import add_message, get_history
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE): # вызывается на каждое текстовое сообщение
     user_id = update.effective_user.id
@@ -85,9 +85,21 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE): # 
         freq_n=state.get("freq_n", 10)
     )
 
+    add_message(user_id, "user", prompt)
+
+    history = get_history(user_id)
+    print("HISTORY:", get_history(user_id))
+    
+    messages = [
+        {"role": "system", "content": "Ты полезный AI-ассистент для анализа текста"}
+    ] + history
+
     try:
-        ai_result = await analyze_with_ai(prompt)
+        ai_result = await analyze_with_ai(messages)
+        add_message(user_id, "assistant", ai_result)
+
         result = format_response(ai_result, mode)
+
     except Exception as e:
         print("AI ERROR:", e)
         result = "❌ Ошибка при обработке. Попробуйте позже."

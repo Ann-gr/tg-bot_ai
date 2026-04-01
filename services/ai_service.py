@@ -1,7 +1,7 @@
 import httpx
 from config import API_URL, OPENROUTER_API_KEY, MODEL
 
-async def analyze_with_ai(prompt):
+async def analyze_with_ai(messages):
     headers = {
         "Authorization": f"Bearer {OPENROUTER_API_KEY}",
         "Content-Type": "application/json"
@@ -9,7 +9,7 @@ async def analyze_with_ai(prompt):
 
     payload = {
         "model": MODEL,
-        "messages": [{"role": "user", "content": prompt}]
+        "messages": messages
     }
 
     try:
