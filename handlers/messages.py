@@ -131,3 +131,52 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE): # 
         result,
         reply_markup=get_main_keyboard()
     ) # отправляем результат и показываем меню
+
+async def handle_document(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    document = update.message.document
+
+    # проверяем тип файла
+    if not document.file_name.endswith(".txt"):
+        await update.message.reply_text("Пожалуйста, отправьте .txt файл 📄")
+        return
+
+    await update.message.reply_text("📥 Загружаю файл...")
+
+    file = await context.bot.get_file(document.file_id) # получаем файл с серверов Telegram
+
+    file_path = f"/tmp/{document.file_name}" # это временная папка на сервере (в Render работает)
+    await file.download_to_drive(file_path)
+
+    # читаем файл
+    try:
+        with open(file_path, "r", encoding="utf-8") as f:
+            text = f.read()
+    except Exception:
+        await update.message.reply_text("❌ Не удалось прочитать файл")
+        return
+
+    # ограничение размера
+    if len(text) > 10000:
+        text = text[:10000]
+
+    await update.message.reply_text("⏳ Анализирую файл...")
+
+    # дальше — как обычный текст
+    user_id = update.effective_user.id
+
+    prompt = create_prompt(text, "analysis")
+
+    add_message(user_id, "user", text)
+    history = get_history(user_id)
+
+    messages = [
+        {"role": "system", "content": prompt}
+    ] + history
+
+    ai_result = await analyze_with_ai(messages)
+
+    add_message(user_id, "assistant", ai_result)
+
+    result = format_response(ai_result, "analysis")
+
+    await update.message.reply_text(result)

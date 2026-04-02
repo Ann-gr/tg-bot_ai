@@ -4,7 +4,7 @@ from handlers.keyboards import get_main_keyboard
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "Привет! 👋\n\nЯ бот для анализа текста.\nВыберите режим ниже 👇",
+        "Привет! 👋\n\nЯ бот для анализа текста.\n📎 Вы можете отправить .txt файл для анализа, либо выбрать режим ниже 👇 и прислать текст в сообщении.",
         reply_markup=get_main_keyboard()
     )
 

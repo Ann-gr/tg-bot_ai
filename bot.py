@@ -6,7 +6,7 @@ from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, fil
 
 from config import TOKEN
 from handlers.commands import start, help_command
-from handlers.messages import handle_message
+from handlers.messages import handle_message, handle_document
 
 # создаём веб-сервер
 app_flask = Flask(__name__)
@@ -18,6 +18,7 @@ tg_app = ApplicationBuilder().token(TOKEN).build()
 tg_app.add_handler(CommandHandler("start", start))
 tg_app.add_handler(CommandHandler("help", help_command))
 tg_app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message)) # указываем, что нужно обрабатывать текст, но не команды
+tg_app.add_handler(MessageHandler(filters.Document.ALL, handle_document)) # добавляем загрузку документов
 
 # создаём event loop вручную
 loop = asyncio.new_event_loop()
