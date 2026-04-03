@@ -1,23 +1,39 @@
-from telegram import ReplyKeyboardMarkup
-def get_main_keyboard():
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+
+def get_mode_keyboard():
     keyboard = [
-        ["📊 Общий анализ", "📝 Краткое содержание"],
-        ["🔑 Ключевые слова", "📈 Частотный анализ"],
-        ["🆕 Добавить новый текст"],
-        ["📜 Показать память", "🧹 Очистить память"]
+        [
+            InlineKeyboardButton("📊 Общий анализ", callback_data="mode:analysis"),
+            InlineKeyboardButton("📝 Краткое содержание", callback_data="mode:summary"),
+        ],
+        [
+            InlineKeyboardButton("🔑 Ключевые слова", callback_data="mode:keywords"),
+            InlineKeyboardButton("📈 Частотный анализ", callback_data="mode:frequency"),
+        ],
+    ]
+    return InlineKeyboardMarkup(keyboard)
+
+def get_param_keyboard(mode):
+    values = [5, 10, 20, 50]
+
+    keyboard = [
+        [InlineKeyboardButton(str(v), callback_data=f"param:{mode}:{v}")]
+        for v in values
     ]
 
-    return ReplyKeyboardMarkup(
-        keyboard,
-        resize_keyboard=True
-    )
+    keyboard.append([InlineKeyboardButton("⬅️ Назад", callback_data="action:change_mode")])
 
-def get_number_keyboard():
+    return InlineKeyboardMarkup(keyboard)
+
+def get_result_keyboard():
     keyboard = [
-        ["5", "10"],
-        ["15", "20"],
-        ["25", "30"],
-        ["⬅️ Назад"]
+        [
+            InlineKeyboardButton("🔁 Повторить", callback_data="action:repeat"),
+        ],
+        [
+            InlineKeyboardButton("⚙️ Изменить режим", callback_data="action:change_mode"),
+            InlineKeyboardButton("🆕 Новый текст", callback_data="action:new_text"),
+        ],
     ]
 
-    return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+    return InlineKeyboardMarkup(keyboard)

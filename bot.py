@@ -2,11 +2,12 @@ import asyncio # нужен, потому что библиотека Telegram �
 from flask import Flask, request
 
 from telegram import Update
-from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters
+from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, CallbackQueryHandler
 
 from config import TOKEN
 from handlers.commands import start, help_command
 from handlers.messages import handle_message, handle_document
+from handlers.callbacks import handle_callback
 
 # создаём веб-сервер
 app_flask = Flask(__name__)
@@ -19,7 +20,7 @@ tg_app.add_handler(CommandHandler("start", start))
 tg_app.add_handler(CommandHandler("help", help_command))
 tg_app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message)) # указываем, что нужно обрабатывать текст, но не команды
 tg_app.add_handler(MessageHandler(filters.Document.ALL, handle_document)) # добавляем загрузку документов
-
+tg_app.add_handler(CallbackQueryHandler(handle_callback))
 # создаём event loop вручную
 loop = asyncio.new_event_loop()
 asyncio.set_event_loop(loop)
