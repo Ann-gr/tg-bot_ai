@@ -207,7 +207,7 @@ async def handle_document(update: Update, context: ContextTypes.DEFAULT_TYPE):
         with open(file_path, "r", encoding="utf-8") as f:
             text = f.read()
     except Exception:
-        await update.message.reply_text("❌ Не удалось прочитать файл")
+        await update.message.reply_text("❌ Не удалось загрузить файл. Попробуйте ещё раз")
         return
 
     # ограничение размера
@@ -216,14 +216,8 @@ async def handle_document(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     state["last_text"] = text
     set_user(user_id, state)
-    mode = state.get("mode", "analysis")
 
-    await update.message.reply_text(f"⏳ Анализирую файл ({mode})...")
-    
-    try:
-        result = await run_analysis(user_id, text, state)
-    except Exception as e:
-        print("AI ERROR:", e)
-        result = "❌ Ошибка при обработке файла"
-
-    await update.message.reply_text(result, reply_markup=get_main_keyboard())
+    await update.message.reply_text(
+        "✅ Файл успешно загружен!\n\nТеперь выберите режим анализа 👇",
+        reply_markup=get_main_keyboard()
+    )
