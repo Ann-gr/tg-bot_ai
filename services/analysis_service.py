@@ -4,16 +4,19 @@ from services.ai_service import analyze_with_ai
 # форматирование ответа
 from utils.formatter import format_response
 # добавляем историю
-from state.user_state import get_history, add_message
+from state.user_state import add_message
 
 async def run_analysis(user_id, text, state):
     mode = state.get("mode", "analysis")
 
+    params = state.get("params", {})
+    n = params.get("n", 10)
+
     prompt = create_prompt(
         text,
         mode,
-        top_n=state.get("top_n", 10),
-        freq_n=state.get("freq_n", 10)
+        top_n=n,
+        freq_n=n
     )
 
     messages = [

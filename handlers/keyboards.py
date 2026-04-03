@@ -10,6 +10,9 @@ def get_mode_keyboard():
             InlineKeyboardButton("🔑 Ключевые слова", callback_data="mode:keywords"),
             InlineKeyboardButton("📈 Частотный анализ", callback_data="mode:frequency"),
         ],
+        [
+            InlineKeyboardButton("🧠 Тональность", callback_data="mode:sentiment"),
+        ],
     ]
     return InlineKeyboardMarkup(keyboard)
 
