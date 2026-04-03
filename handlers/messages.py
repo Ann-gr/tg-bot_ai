@@ -1,8 +1,17 @@
+import os
+
 from telegram import Update
 from telegram.ext import ContextTypes
 
 from handlers.keyboards import get_mode_keyboard
 from state.user_state import set_user, get_user
+
+from services.file_service import extract_text_from_file, FileProcessingError
+
+MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
+MAX_TEXT_LENGTH = 20000
+
+SUPPORTED_FORMATS = (".txt", ".pdf", ".docx")
 
 def get_default_state():
     return {
@@ -27,15 +36,27 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=get_mode_keyboard(),
     )
 
-# ОБРАБОТКА ФАЙЛА
+# ОБРАБОТКА ФАЙЛОВ
 async def handle_document(update: Update, context: ContextTypes.DEFAULT_TYPE):
     document = update.message.document
     user_id = update.effective_user.id
 
     state = get_user(user_id) or get_default_state()
 
-    if not document.file_name.endswith(".txt"):
-        await update.message.reply_text("Пожалуйста, отправьте .txt файл 📄")
+    file_name = document.file_name.lower()
+
+    # Проверка формата
+    if not file_name.endswith(SUPPORTED_FORMATS):
+        await update.message.reply_text(
+            "❌ Поддерживаются только следующие форматы: PDF, DOCX, TXT"
+        )
+        return
+
+    # Проверка размера
+    if document.file_size > MAX_FILE_SIZE:
+        await update.message.reply_text(
+            "❌ Файл слишком большой (макс 5MB)"
+        )
         return
 
     await update.message.reply_text("📥 Загружаю файл...")
@@ -44,21 +65,36 @@ async def handle_document(update: Update, context: ContextTypes.DEFAULT_TYPE):
     file_path = f"/tmp/{document.file_name}"
 
     await file.download_to_drive(file_path)
+    
+    await update.message.reply_text("🔍 Извлекаю текст из файла...")
 
     try:
-        with open(file_path, "r", encoding="utf-8") as f:
-            text = f.read()
+        # Определяем тип
+        file_type = file_name.split(".")[-1]
+
+        # Извлекаем текст
+        text = extract_text_from_file(file_path, file_type)
+
+        # Ограничение текста
+        if len(text) > MAX_TEXT_LENGTH:
+            text = text[:MAX_TEXT_LENGTH]
+
+        # Сохраняем в state
+        state["last_text"] = text
+        set_user(user_id, state)
+
+        await update.message.reply_text(
+            "✅ Файл успешно загружен\n\nВыберите режим анализа:",
+            reply_markup=get_mode_keyboard(),
+        )
+
+    except FileProcessingError as e:
+        await update.message.reply_text(f"❌ Ошибка файла:\n{e}")
+
     except Exception:
-        await update.message.reply_text("❌ Не удалось загрузить файл")
-        return
+        await update.message.reply_text("❌ Не удалось обработать файл")
 
-    if len(text) > 10000:
-        text = text[:10000]
-
-    state["last_text"] = text
-    set_user(user_id, state)
-
-    await update.message.reply_text(
-        "✅ Файл загружен\n\nВыберите режим анализа:",
-        reply_markup=get_mode_keyboard(),
-    )
+    finally:
+        # Очистка
+        if os.path.exists(file_path):
+            os.remove(file_path)

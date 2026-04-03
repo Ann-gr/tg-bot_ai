@@ -4,7 +4,7 @@ from handlers.keyboards import get_mode_keyboard
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "Привет! 👋\n\nЯ бот для анализа текста.\n📎 Вы можете отправить .txt файл для анализа, либо прислать текст в сообщении."
+        "Привет! 👋\n\nЯ бот для анализа текста.\n\nЯ могу проанализировать текст из вашего файла или сообщения.\n\n📂 Поддерживаются только следующие форматы: PDF, DOCX, TXT."
     )
 
 
