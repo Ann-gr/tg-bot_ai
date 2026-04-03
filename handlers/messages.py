@@ -17,7 +17,7 @@ def get_default_state():
     }
 
 async def analyze_last_text(update, user_id, state):
-    await update.message.reply_text("⏳ Анализирую предыдущий текст...")
+    await update.message.reply_text("⏳ Анализирую загруженный текст...")
     
     try:
         result = await run_analysis(user_id, state["last_text"], state)
