@@ -16,14 +16,8 @@ from services.db import connect_db
 # создаём веб-сервер
 app_flask = Flask(__name__)
 
-async def on_startup(app):
-    await connect_db()
-
 # создаём объект бота
 tg_app = ApplicationBuilder().token(TOKEN).build()
-
-# подключаем бд
-tg_app.post_init = on_startup
 
 # регистрируем handlers
 tg_app.add_handler(CommandHandler("start", start))
@@ -36,6 +30,7 @@ tg_app.add_handler(CallbackQueryHandler(debug_callbacks))
 # создаём event loop вручную
 loop = asyncio.new_event_loop()
 asyncio.set_event_loop(loop)
+loop.run_until_complete(connect_db())
 
 # запускаем Telegram приложение
 loop.run_until_complete(tg_app.initialize())
