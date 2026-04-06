@@ -1,7 +1,8 @@
 import sqlite3
-from pathlib import Path
+import os
 
-DB_PATH = Path("tg_bot/bot.db")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, "state.db")
 
 def get_connection():
     conn = sqlite3.connect(DB_PATH)
