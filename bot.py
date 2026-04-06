@@ -5,7 +5,7 @@ from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, CallbackQueryHandler
 
 from config import TOKEN
-from handlers.commands import start, menu, help, example
+from handlers.commands import start
 from handlers.messages import handle_message, handle_document
 from handlers.callbacks import handle_callback
 
@@ -17,9 +17,6 @@ tg_app = ApplicationBuilder().token(TOKEN).build()
 
 # регистрируем handlers
 tg_app.add_handler(CommandHandler("start", start))
-tg_app.add_handler(CommandHandler("menu", menu))
-tg_app.add_handler(CommandHandler("help", help))
-tg_app.add_handler(CommandHandler("example", example))
 tg_app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message)) # указываем, что нужно обрабатывать текст, но не команды
 tg_app.add_handler(MessageHandler(filters.Document.ALL, handle_document)) # добавляем загрузку документов
 tg_app.add_handler(CallbackQueryHandler(handle_callback)) # добавляем обработку callback-запросов
