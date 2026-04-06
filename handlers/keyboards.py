@@ -67,6 +67,9 @@ def get_main_menu_keyboard(has_text=False):
     keyboard.append([
         InlineKeyboardButton("🧠 Помощь", callback_data="go:help")
     ])
+    keyboard.append([
+        InlineKeyboardButton("🧷 Пример работы", callback_data="go:example")
+    ])
 
     return InlineKeyboardMarkup(keyboard)
 
