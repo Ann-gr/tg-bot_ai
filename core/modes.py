@@ -10,9 +10,6 @@ CRITICAL RULES:
 - Follow the output format EXACTLY
 - Do NOT copy large parts of the original text
 
-TEXT:
-{text}
-
 IMPORTANT:
 You MUST strictly follow the output format.
 Do not change section names.
@@ -28,26 +25,8 @@ STRICT OUTPUT CONTROL:
 - Do NOT add introductions or conclusions
 - Do NOT explain what you are doing
 
-Example output:
-
-Краткое содержание:
-...
-
-Тема:
-...
-
-Ключевые идеи:
-- ...
-- ...
-- ...
-- ...
-
-Ключевые слова:
-- ...
-- ...
-- ...
-- ...
-- ...
+TEXT:
+{text}
 """
 
 MODE_REGISTRY = {
