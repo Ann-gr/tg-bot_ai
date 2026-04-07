@@ -62,9 +62,8 @@ Return the result in the following structure:
         "label": "📝 Краткое содержание",
         "needs_param": False,
         "prompt": """
-Create a short summary of the text.
-Return the result in the following structure:
-(2–4 предложения, без списков)
+Create a short summary of the text (2-4 sentences, without lists).
+Return the result as paragraphed text.
 """
     },
 
@@ -87,7 +86,7 @@ Return the result in the following structure:
         "needs_param": True,
         "param_name": "n",
         "prompt": """
-Analyze word frequency.
+Analyze {top_n} word frequency.
 Return the result as a numbered list:
 1. слово: количество
 2. слово: количество
