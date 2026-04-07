@@ -21,7 +21,7 @@ def validate_structure(text: str, mode: str) -> str:
     if mode == "analysis":
         required = ["Краткое содержание", "Тема"]
     elif mode == "summary":
-        required = ["Краткое содержание"]
+        required = ["📝 Краткое содержание"]
     elif mode == "keywords":
         required = ["Ключевые слова"]
     elif mode == "frequency":
