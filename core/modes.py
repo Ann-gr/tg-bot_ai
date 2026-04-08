@@ -15,6 +15,7 @@ You MUST strictly follow the output format.
 Do not change section names.
 Do not translate them.
 Do not add any extra text.
+Do not add any design to section headings.
 
 STRICT OUTPUT CONTROL:
 - Follow ONLY the requested mode
@@ -111,7 +112,7 @@ Return the result in the following structure:
 (1–2 предложения)
 """
     },
-    
+
     "qa": {
     "label": "❓ Вопрос по тексту",
     "needs_param": False,
