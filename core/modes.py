@@ -110,5 +110,23 @@ Return the result in the following structure:
 Объяснение:
 (1–2 предложения)
 """
-    }
+    },
+    
+    "qa": {
+    "label": "❓ Вопрос по тексту",
+    "needs_param": False,
+    "prompt": """
+Answer the user's question based ONLY on the provided text.
+
+Return:
+Ответ:
+(краткий и точный ответ)
+
+Обоснование:
+(где в тексте это найдено, 1–2 предложения)
+
+If the answer is not in the text, say:
+"Ответ не найден в тексте"
+"""
+}
 }

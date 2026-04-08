@@ -4,13 +4,23 @@ from services.ai_service import analyze_with_ai
 # форматирование ответа
 from utils.formatter import format_response
 # добавляем историю
-from services.history_db import add_message
+from services.history_db import add_message_db, get_history_db
 
 async def run_analysis(user_id, text, state):
     mode = state.get("mode", "analysis")
 
     params = state.get("params", {})
     n = params.get("n", 10)
+
+    if mode == "qa":
+        question = state.get("question", "")
+
+        prompt = create_prompt(
+            text + f"\n\nQUESTION:\n{question}",
+            mode,
+            top_n=n,
+            freq_n=n
+        )
 
     prompt = create_prompt(
         text,
@@ -19,20 +29,26 @@ async def run_analysis(user_id, text, state):
         freq_n=n
     )
 
+    history = await get_history_db(user_id, limit=6)
+
     messages = [
-        {"role": "user", "content": prompt}
+        {"role": "system", "content": "You are a precise text analysis assistant."}
     ]
+
+    messages += history
+
+    messages.append({
+        "role": "user",
+        "content": prompt
+    })
 
     ai_result = await analyze_with_ai(messages)
 
     def is_real_text(text):
-        CONTROL_WORDS = [
-            "📊", "📝", "🔑", "📈", "🆕", "📜", "🧹", "⬅️"
-        ]
-        return not any(text.startswith(c) for c in CONTROL_WORDS)
+        return isinstance(text, str) and len(text.strip()) > 0
 
     # сохраняем только диалог
     if is_real_text(ai_result):
-        await add_message(user_id, "user", text)
-        await add_message(user_id, "assistant", ai_result)
+        await add_message_db(user_id, "user", text)
+        await add_message_db(user_id, "assistant", ai_result)
     return format_response(ai_result, mode)

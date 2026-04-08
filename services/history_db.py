@@ -1,6 +1,6 @@
 from services.db import get_pool
 
-async def add_message(user_id, role, content):
+async def add_message_db(user_id, role, content):
     pool = await get_pool()
     async with pool.acquire() as conn:
         await conn.execute(
@@ -11,7 +11,7 @@ async def add_message(user_id, role, content):
             str(user_id), role, content
         )
 
-async def get_history(user_id):
+async def get_history_db(user_id, limit=6):
     pool = await get_pool()
     async with pool.acquire() as conn:
         rows = await conn.fetch(
@@ -20,9 +20,10 @@ async def get_history(user_id):
             FROM history
             WHERE user_id = $1
             ORDER BY id DESC
-            LIMIT 6
+            LIMIT $2
             """,
-            str(user_id)
+            str(user_id),
+            limit
         )
 
     return [{"role": r["role"], "content": r["content"]} for r in reversed(rows)]

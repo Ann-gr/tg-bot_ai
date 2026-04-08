@@ -1,4 +1,5 @@
 import httpx
+import logging
 from config import API_URL, OPENROUTER_API_KEY, MODEL
 
 async def analyze_with_ai(messages):
@@ -16,7 +17,8 @@ async def analyze_with_ai(messages):
     try:
         async with httpx.AsyncClient(timeout=15) as client:
             response = await client.post(API_URL, headers=headers, json=payload)
-            print("AI RESPONSE:", response.status_code) # логирование
+            logger = logging.getLogger(__name__)
+            logger.info(f"AI status: {response.status_code}") # логирование
 
         if response.status_code != 200:
             return f"Ошибка {response.status_code}: {response.text}"

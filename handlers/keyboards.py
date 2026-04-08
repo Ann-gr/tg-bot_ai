@@ -12,6 +12,7 @@ def get_mode_keyboard():
         ],
         [
             InlineKeyboardButton("🧠 Тональность", callback_data="mode:sentiment"),
+            InlineKeyboardButton("❓ Вопрос по тексту", callback_data="mode:qa"),
         ],
     ]
     return InlineKeyboardMarkup(keyboard)

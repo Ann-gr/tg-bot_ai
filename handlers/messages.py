@@ -13,23 +13,27 @@ MAX_TEXT_LENGTH = 20000
 
 SUPPORTED_FORMATS = (".txt", ".pdf", ".docx")
 
-def get_default_state():
-    return {
-        "last_text": None,
-        "mode": None,
-        "params": {},
-        "last_result": None
-    }
-
 # ОБРАБОТКА ТЕКСТА
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     text = update.message.text
 
-    state = state_manager.get_state(user_id) or get_default_state()
+    state = await state_manager.get_state(user_id)
 
-    state["last_text"] = text
-    state_manager.update_state(user_id, **state)
+    # если режим вопроса → сохраняем вопрос
+    if state.get("mode") == "qa" and state.get("last_text"):
+        state["question"] = text
+        await state_manager.update_state(user_id, **state)
+
+        await update.message.reply_text(
+            "✅ Вопрос сохранён, выполняю анализ..."
+        )
+
+        # запускаем анализ
+        return
+
+    # обычная логика
+    await state_manager.update_state(user_id, last_text=text)
 
     await update.message.reply_text(
         "✅ Текст загружен\n\nВыберите режим анализа:",
@@ -40,9 +44,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def handle_document(update: Update, context: ContextTypes.DEFAULT_TYPE):
     document = update.message.document
     user_id = update.effective_user.id
-
-    state = state_manager.get_state(user_id) or get_default_state()
-
     file_name = document.file_name.lower()
 
     # Проверка формата
@@ -80,8 +81,7 @@ async def handle_document(update: Update, context: ContextTypes.DEFAULT_TYPE):
             text = text[:MAX_TEXT_LENGTH]
 
         # Сохраняем в state
-        state["last_text"] = text
-        state_manager.update_state(user_id, **state)
+        state_manager.update_state(user_id, last_text=text)
 
         await update.message.reply_text(
             "✅ Файл успешно загружен\n\nВыберите режим анализа:",
