@@ -8,7 +8,7 @@ async def process_user_input(user_id, state, text=None):
     mode = state.get("mode")
 
     # Если пришёл новый текст → сохраняем
-    if text and mode != "qa":
+    if text and not state.get("last_text"):
         state["last_text"] = text
         return {
             "action": "ask_mode",
@@ -27,6 +27,8 @@ async def process_user_input(user_id, state, text=None):
             return {"action": "ask_question"}
 
         result = await run_analysis(user_id, state["last_text"], state)
+
+        state["question"] = None
 
         return {
             "action": "show_result",

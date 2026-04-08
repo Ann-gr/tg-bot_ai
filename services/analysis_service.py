@@ -21,13 +21,13 @@ async def run_analysis(user_id, text, state):
             top_n=n,
             freq_n=n
         )
-
-    prompt = create_prompt(
-        text,
-        mode,
-        top_n=n,
-        freq_n=n
-    )
+    else:
+        prompt = create_prompt(
+            text,
+            mode,
+            top_n=n,
+            freq_n=n
+        )
 
     history = await get_history_db(user_id, limit=6)
 

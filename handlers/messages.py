@@ -54,8 +54,7 @@ async def handle_message(update, context):
 
         await state_manager.update_state(
             user_id,
-            **data["state"],
-            last_result=result
+            **data["state"]
         )
 
         title = get_mode_title(state.get("mode"))

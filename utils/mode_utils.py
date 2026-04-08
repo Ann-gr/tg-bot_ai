@@ -4,6 +4,7 @@ MODE_TITLES = {
     "keywords": "🔑 Ключевые слова",
     "frequency": "📈 Частотный анализ",
     "sentiment": "🧠 Тональность",
+    "qa": "❓ Вопрос по тексту"
 }
 
 def get_mode_title(mode: str) -> str:
