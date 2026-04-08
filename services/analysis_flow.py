@@ -7,15 +7,7 @@ async def process_user_input(user_id, state, text=None):
 
     mode = state.get("mode")
 
-    # Если пришёл новый текст → сохраняем
-    if text and not state.get("last_text"):
-        state["last_text"] = text
-        return {
-            "action": "ask_mode",
-            "state": state
-        }
-
-    # QA режим (вопрос по тексту)
+    # режим QA
     if mode == "qa":
         if text:
             state["question"] = text
@@ -24,15 +16,22 @@ async def process_user_input(user_id, state, text=None):
             return {"error": "Сначала отправьте текст"}
 
         if not state.get("question"):
-            return {"action": "ask_question"}
+            return {"action": "ask_question", "state": state}
 
         result = await run_analysis(user_id, state["last_text"], state)
-
-        state["question"] = None
 
         return {
             "action": "show_result",
             "result": result,
+            "state": state
+        }
+
+    # Если пришёл новый текст (НЕ QA)
+    if text:
+        state["last_text"] = text
+        state["question"] = None  # важно сбрасывать
+        return {
+            "action": "ask_mode",
             "state": state
         }
 

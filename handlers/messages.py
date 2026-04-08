@@ -54,7 +54,9 @@ async def handle_message(update, context):
 
         await state_manager.update_state(
             user_id,
-            **data["state"]
+            **data["state"],
+            last_result=result,
+            question=None
         )
 
         title = get_mode_title(state.get("mode"))
@@ -64,6 +66,7 @@ async def handle_message(update, context):
             f"{title}\n\n{short_text}",
             reply_markup=get_result_keyboard(is_truncated),
         )
+        return
 
 # ОБРАБОТКА ФАЙЛОВ
 async def handle_document(update: Update, context: ContextTypes.DEFAULT_TYPE):
