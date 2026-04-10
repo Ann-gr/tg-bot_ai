@@ -162,6 +162,25 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "❓ Задайте следующий вопрос:", 
             reply_markup=get_back_keyboard())
         return
+    
+    if data == "action:qa_history":
+        history = state.get("qa_history", [])[-5:]
+
+        if not history:
+            await query.edit_message_text("❌ История пуста")
+            return
+
+        text = "📜 История вопросов:\n\n"
+
+        for item in history[-5:]:
+            text += f"❓ {item['q']}\n"
+            text += f"{item['a']}\n\n"
+
+        await query.edit_message_text(
+            text,
+            reply_markup=get_back_keyboard()
+        )
+        return
 
 async def run_and_show_result(query, user_id, state):
     await query.edit_message_text("⏳ Анализирую...\n\nЭто может занять несколько секунд")

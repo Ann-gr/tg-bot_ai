@@ -41,6 +41,9 @@ def get_result_keyboard(mode, is_truncated=False):
         keyboard.append([
             InlineKeyboardButton("💬 Задать ещё вопрос", callback_data="action:ask_more"),
         ])
+        keyboard.append([
+            InlineKeyboardButton("📜 История вопросов", callback_data="action:qa_history"),
+        ])
 
     keyboard.extend([
         [
@@ -57,7 +60,7 @@ def get_result_keyboard(mode, is_truncated=False):
 
     return InlineKeyboardMarkup(keyboard)
 
-def get_main_menu_keyboard(has_text=False):
+def get_main_menu_keyboard(mode, has_text=False):
     keyboard = [
         [InlineKeyboardButton("📂 Загрузить текст", callback_data="go:upload")],
     ]
@@ -68,6 +71,14 @@ def get_main_menu_keyboard(has_text=False):
         ])
         keyboard.append([
             InlineKeyboardButton("⚙️ Выбрать режим", callback_data="action:change_mode")
+        ])
+
+    if mode == "qa":
+        keyboard.append([
+            InlineKeyboardButton("💬 Задать вопрос по тексту", callback_data="action:ask_more"),
+        ])
+        keyboard.append([
+            InlineKeyboardButton("📜 История вопросов", callback_data="action:qa_history"),
         ])
 
     keyboard.append([

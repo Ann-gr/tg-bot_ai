@@ -46,5 +46,5 @@ async def save_state_db(user_id, state):
             json.dumps(state.get("params", {})),
             state.get("last_text"),
             state.get("last_result"),
-            json.dumps(state.get("qa_history", [])),
+            json.dumps(state.get("qa_history", []), ensure_ascii=False),
         )

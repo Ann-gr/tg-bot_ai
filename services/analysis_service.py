@@ -17,7 +17,8 @@ async def run_analysis(user_id, text, state):
         mode,
         top_n=n,
         freq_n=n,
-        question=question
+        question=question,
+        qa_history=qa_history
     )
 
     messages = [

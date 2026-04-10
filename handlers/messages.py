@@ -3,7 +3,7 @@ import os
 from telegram import Update
 from telegram.ext import ContextTypes
 
-from handlers.keyboards import get_mode_keyboard, get_result_keyboard
+from handlers.keyboards import get_mode_keyboard, get_result_keyboard, get_back_keyboard
 from state import state_manager
 
 from services.file_service import extract_text_from_file, FileProcessingError
@@ -34,6 +34,7 @@ async def handle_message(update, context):
     # выбрать режим
     if data.get("action") == "ask_mode":
         state = data["state"]
+        state["qa_history"] = []
         await state_manager.update_state(user_id, **state)
 
         await update.message.reply_text(
@@ -47,7 +48,9 @@ async def handle_message(update, context):
         state = data["state"]
         await state_manager.update_state(user_id, **state)
 
-        await update.message.reply_text("❓ Введите вопрос по тексту:")
+        await update.message.reply_text(
+            "❓ Введите вопрос по тексту:", 
+            reply_markup=get_back_keyboard())
         return
 
     # показать результат
@@ -112,7 +115,8 @@ async def handle_document(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await state_manager.update_state(
             user_id,
             last_text=text,
-            question=None  # 🔥 сброс QA режима
+            question=None,  # сброс QA режима
+            qa_history=[]  # сброс QA истории
         )
 
         await update.message.reply_text(
