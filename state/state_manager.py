@@ -8,7 +8,8 @@ class StateManager:
         "params": {},
         "last_text": None,
         "last_result": None,
-        "question": None
+        "question": None,
+        "qa_history": []
     }
 
     async def get_state(self, user_id):

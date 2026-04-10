@@ -20,6 +20,16 @@ async def process_user_input(user_id, state, text=None):
 
         result = await run_analysis(user_id, state["last_text"], state)
 
+        # сохраняем в историю
+        history = state.get("qa_history", [])
+        history.append({
+            "q": state["question"],
+            "a": result
+        })
+
+        # ограничение
+        state["qa_history"] = history[-5:]
+
         return {
             "action": "show_result",
             "result": result,

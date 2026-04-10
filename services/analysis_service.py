@@ -10,6 +10,7 @@ async def run_analysis(user_id, text, state):
     params = state.get("params", {})
     n = params.get("n", 10)
     question = state.get("question", None)
+    qa_history = state.get("qa_history", [])
 
     prompt = create_prompt(
         text,
@@ -21,8 +22,15 @@ async def run_analysis(user_id, text, state):
 
     messages = [
         {"role": "system", "content": "You are a precise text analysis assistant."},
-        {"role": "user", "content": prompt}
     ]
+
+    # история диалога
+    for item in qa_history:
+        messages.append({"role": "user", "content": item["q"]})
+        messages.append({"role": "assistant", "content": item["a"]})
+
+    # текущий запрос
+    messages.append({"role": "user", "content": prompt})
 
     ai_result = await analyze_with_ai(messages)
 
