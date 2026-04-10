@@ -34,7 +34,23 @@ async def handle_message(update, context):
     # выбрать режим
     if data.get("action") == "ask_mode":
         state = data["state"]
+
+        if state.get("last_text"):
+            archive_item = {
+                "text_preview": state["last_text"][:200],
+                "qa_history": state.get("qa_history", []),
+                "analysis_history": state.get("analysis_history", [])
+            }
+
+            archive = state.get("archive", [])
+            archive.append(archive_item)
+
+            state["archive"] = archive[-5:]
+
+        # очищаем текущий текст
         state["qa_history"] = []
+        state["analysis_history"] = []
+
         await state_manager.update_state(user_id, **state)
 
         await update.message.reply_text(

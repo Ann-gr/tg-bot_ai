@@ -61,6 +61,8 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "→ какие слова встречаются чаще всего\n\n"
             "🧠 *Тональность*\n"
             "→ позитивный / нейтральный / негативный\n\n"
+            "❓ *Вопрос по тексту*\n"
+            "→ вы можете хадать любой вопрос по тексту\n\n"
             "📌 Как это работает:\n"
             "1. Отправьте файл или текст\n"
             "2. Выберите режим\n"
@@ -176,6 +178,25 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         for item in history[-5:]:
             text += f"❓ {item['q']}\n"
             text += f"{item['a']}\n\n"
+
+        await query.edit_message_text(
+            text,
+            reply_markup=get_back_keyboard()
+        )
+        return
+    
+    if data == "action:analysis_history":
+        history = state.get("analysis_history", [])
+
+        if not history:
+            await query.edit_message_text("❌ История анализов пуста")
+            return
+
+        text = "📊 История анализов:\n\n"
+
+        for item in history[-5:]:
+            text += f"🔹 {item['mode']}\n"
+            text += f"{item['result'][:200]}...\n\n"
 
         await query.edit_message_text(
             text,

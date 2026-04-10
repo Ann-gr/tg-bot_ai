@@ -35,6 +35,17 @@ async def process_user_input(user_id, state, text=None):
             "result": result,
             "state": state
         }
+    
+    # история анализов
+    if mode != "qa":
+        history = state.get("analysis_history", [])
+
+        history.append({
+            "mode": mode,
+            "result": result
+        })
+
+        state["analysis_history"] = history[-10:]
 
     # Если пришёл новый текст (НЕ QA)
     if text:

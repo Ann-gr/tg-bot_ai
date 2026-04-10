@@ -52,7 +52,8 @@ def get_result_keyboard(mode, is_truncated=False):
             InlineKeyboardButton("🆕 Новый текст", callback_data="action:new_text"),
         ],
         [
-            InlineKeyboardButton("⬅️ В меню", callback_data="go:menu"),
+            InlineKeyboardButton("📊 История анализов", callback_data="action:analysis_history"),
+            InlineKeyboardButton("⬅️ В меню", callback_data="go:menu")
         ]
     ])
 
@@ -77,7 +78,8 @@ def get_main_menu_keyboard(mode, has_text=False):
 
     keyboard.append([
         InlineKeyboardButton("🧠 Помощь", callback_data="go:help"),
-        InlineKeyboardButton("🧷 Пример работы", callback_data="go:example")
+        InlineKeyboardButton("🧷 Пример работы", callback_data="go:example"),
+        InlineKeyboardButton("📊 История анализов", callback_data="action:analysis_history")
     ])
 
     return InlineKeyboardMarkup(keyboard)
