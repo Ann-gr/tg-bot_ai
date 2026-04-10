@@ -33,7 +33,7 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "📊 Главное меню\n\n"
             f"Текущий режим: {mode_title}\n\n"
             "Выберите действие:",
-            reply_markup=get_main_menu_keyboard(has_text)
+            reply_markup=get_main_menu_keyboard(state.get("mode"), has_text)
         )
         return
 
@@ -103,7 +103,8 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         
         if mode == "qa":
             await query.edit_message_text(
-                "❓ Введите ваш вопрос по тексту:"
+                "❓ Введите ваш вопрос по тексту:",
+                reply_markup=get_back_keyboard(),
             )
             return
 
