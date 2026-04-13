@@ -34,13 +34,14 @@ async def save_state_db(user_id, state):
         await conn.execute(
             """
             INSERT INTO user_state (user_id, mode, params, last_text, last_result, qa_history, analysis_history)
-            VALUES ($1, $2, $3, $4, $5, $6)
+            VALUES ($1, $2, $3, $4, $5, $6, $7)
             ON CONFLICT (user_id) DO UPDATE SET
                 mode = EXCLUDED.mode,
                 params = EXCLUDED.params,
                 last_text = EXCLUDED.last_text,
                 last_result = EXCLUDED.last_result,
-                qa_history = EXCLUDED.qa_history
+                qa_history = EXCLUDED.qa_history,
+                analysis_history = EXCLUDED.analysis_history
             """,
             str(user_id),
             state.get("mode"),
