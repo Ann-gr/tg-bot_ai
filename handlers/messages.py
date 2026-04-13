@@ -24,6 +24,10 @@ async def handle_message(update, context):
 
     state = await state_manager.get_state(user_id)
 
+    loading_msg = await update.message.reply_text(
+        "⏳ Думаю над ответом...\n\nЭто может занять несколько секунд"
+    )
+
     data = await process_user_input(user_id, state, text)
 
     # ошибки
@@ -59,16 +63,6 @@ async def handle_message(update, context):
         )
         return
 
-    # спросить вопрос
-    if data.get("action") == "ask_question":
-        state = data["state"]
-        await state_manager.update_state(user_id, **state)
-
-        await update.message.reply_text(
-            "❓ Введите вопрос по тексту:", 
-            reply_markup=get_back_keyboard())
-        return
-
     # показать результат
     if data.get("action") == "show_result":
         result = data["result"]
@@ -78,10 +72,10 @@ async def handle_message(update, context):
 
         await state_manager.update_state(user_id, **state)
 
-        title = get_mode_title(data["state"].get("mode"))
+        title = get_mode_title(state.get("mode"))
         short_text, is_truncated = shorten_text(result)
 
-        await update.message.reply_text(
+        await loading_msg.edit_text(
             f"{title}\n\n{short_text}",
             reply_markup=get_result_keyboard(state, is_truncated),
         )

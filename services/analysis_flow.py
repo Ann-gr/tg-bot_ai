@@ -16,9 +16,6 @@ async def process_user_input(user_id, state, text=None):
         if not state.get("last_text"):
             return {"error": "Сначала отправьте текст"}
 
-        if not state.get("question"):
-            return {"action": "ask_question", "state": state}
-
         result = await run_analysis(user_id, state["last_text"], state)
 
         qa_history = state.get("qa_history", [])

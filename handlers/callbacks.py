@@ -63,7 +63,7 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "🧠 *Тональность*\n"
             "→ позитивный / нейтральный / негативный\n\n"
             "❓ *Вопрос по тексту*\n"
-            "→ вы можете хадать любой вопрос по тексту\n\n"
+            "→ вы можете задать любой вопрос по тексту\n\n"
             "📌 Как это работает:\n"
             "1. Отправьте файл или текст\n"
             "2. Выберите режим\n"
@@ -254,12 +254,6 @@ async def run_and_show_result(query, user_id, state):
     if data.get("error"):
         await query.edit_message_text(data["error"])
         return
-    
-    if data.get("action") == "ask_question":
-        await query.edit_message_text(
-            "❓ Введите вопрос по тексту:"
-        )
-        return 
     
     if data.get("action") != "show_result":
         await query.edit_message_text("❌ Не удалось выполнить анализ")
