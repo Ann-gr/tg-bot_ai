@@ -299,6 +299,7 @@ async def run_and_show_result(query, user_id, state):
     state["last_result"] = result
     state["question"] = None
     state["ui_state"] = "RESULT"
+    state["result_view"] = "short"
 
     await state_manager.update_state(user_id, **state)
 
@@ -315,7 +316,7 @@ async def run_and_show_result(query, user_id, state):
 
     await query.edit_message_text(
         formatted_text,
-        reply_markup=get_result_keyboard(),
+        reply_markup=get_result_keyboard(state["result_view"], is_truncated),
     )
 
 ACTION_MAP = {

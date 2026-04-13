@@ -39,17 +39,18 @@ def get_param_keyboard(mode):
 
     return InlineKeyboardMarkup(keyboard)
 
-def get_result_keyboard(is_truncated=False):
+def get_result_keyboard(result_view="short", is_truncated=False):
     keyboard = []
 
     if is_truncated:
-        keyboard.append([
-            InlineKeyboardButton("📖 Показать полностью", callback_data="action:full_result")
-        ])
-    else:
-        keyboard.append([
-            InlineKeyboardButton("🔽 Свернуть", callback_data="action:short_result")
-        ])
+        if result_view == "short":
+            keyboard.append([
+                InlineKeyboardButton("📖 Показать полностью", callback_data="action:full_result")
+            ])
+        else:
+            keyboard.append([
+                InlineKeyboardButton("🔽 Свернуть", callback_data="action:short_result")
+            ])
 
     keyboard.extend([
         [

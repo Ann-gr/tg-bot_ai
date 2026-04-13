@@ -71,6 +71,7 @@ async def handle_message(update, context):
         state = data["state"]
         state["last_result"] = result
         state["ui_state"] = "RESULT"
+        state["result_view"] = "short"
 
         await state_manager.update_state(user_id, **state)
 
@@ -79,7 +80,7 @@ async def handle_message(update, context):
 
         await loading_msg.edit_text(
             f"{title}\n\n{short_text}",
-            reply_markup=get_result_keyboard(),
+            reply_markup=get_result_keyboard(state["result_view"], is_truncated),
         )
         return
 

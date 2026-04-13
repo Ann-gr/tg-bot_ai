@@ -23,6 +23,7 @@ class StateManager:
         "question": None,
         "qa_history": [],
         "analysis_history": [],
+        "result_view": "short",
         "ui_state": "EMPTY"
     }
 
