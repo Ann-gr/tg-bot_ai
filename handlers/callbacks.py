@@ -216,11 +216,23 @@ async def run_and_show_result(query, user_id, state):
     if data.get("error"):
         await query.edit_message_text(data["error"])
         return
+    
+    if data.get("action") == "ask_question":
+        await query.edit_message_text(
+            "❓ Введите вопрос по тексту:"
+        )
+        return 
+    
+    if data.get("action") != "show_result":
+        await query.edit_message_text("❌ Не удалось выполнить анализ")
+        return
 
     result = data["result"]
 
+    state = data["state"]
     state["last_result"] = result
     state["question"] = None
+    
     await state_manager.update_state(user_id, **state)
 
     title = get_mode_title(state.get("mode"))
