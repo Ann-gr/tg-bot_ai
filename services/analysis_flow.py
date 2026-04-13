@@ -1,4 +1,5 @@
 from services.analysis_service import run_analysis
+import uuid
 
 async def process_user_input(user_id, state, text=None):
     """
@@ -19,6 +20,15 @@ async def process_user_input(user_id, state, text=None):
             return {"action": "ask_question", "state": state}
 
         result = await run_analysis(user_id, state["last_text"], state)
+
+        qa_history = state.get("qa_history", [])
+
+        qa_history.append({
+            "q": state.get("question"),
+            "a": result
+        })
+        
+        state["qa_history"] = qa_history[-10:]
 
         return {
             "action": "show_result",
@@ -41,21 +51,13 @@ async def process_user_input(user_id, state, text=None):
 
     result = await run_analysis(user_id, state["last_text"], state)
 
-    # единая точка сохранения истории вопросов и анализов
-    if mode == "qa":
-        qa_history = state.get("qa_history", [])
-        qa_history.append({
-            "q": state.get("question"),
-            "a": result
-        })
-        state["qa_history"] = qa_history[-10:]
-    else:
-        analysis_history = state.get("analysis_history", [])
-        analysis_history.append({
-            "mode": mode,
-            "result": result
-        })
-        state["analysis_history"] = analysis_history[-10:]
+    analysis_history = state.get("analysis_history", [])
+    analysis_history.append({
+        "id": str(uuid.uuid4()),
+        "mode": mode,
+        "result": result
+    })
+    state["analysis_history"] = analysis_history[-10:]
 
     return {
         "action": "show_result",

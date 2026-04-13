@@ -7,6 +7,7 @@ from handlers.keyboards import (
     get_result_keyboard,
     get_main_menu_keyboard,
     get_back_keyboard,
+    get_analysis_history_keyboard
 )
 from services.analysis_flow import process_user_input
 from state import state_manager
@@ -196,14 +197,30 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 reply_markup=get_back_keyboard())
             return
 
-        text = "📊 История анализов:\n\n"
+        await query.edit_message_text(
+            "📊 История анализов:",
+            reply_markup=get_analysis_history_keyboard(history)
+        )
+        return
+    
+    if data.startswith("analysis_item:"):
+        item_id = data.split(":")[1]
 
-        for item in history[-5:]:
-            text += f"🔹 {item['mode']}\n"
-            text += f"{item['result'][:200]}...\n\n"
+        history = state.get("analysis_history", [])
+
+        item = next((x for x in history if x["id"] == item_id), None)
+
+        if not item:
+            await query.edit_message_text(
+                "❌ Анализ не найден",
+                reply_markup=get_back_keyboard()
+            )
+            return
+
+        title = get_mode_title(item["mode"])
 
         await query.edit_message_text(
-            text,
+            f"{title}\n\n{item['result']}",
             reply_markup=get_back_keyboard()
         )
         return

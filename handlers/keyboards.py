@@ -1,4 +1,5 @@
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+from utils.mode_utils import get_mode_title
 
 def get_mode_keyboard():
     keyboard = [
@@ -104,3 +105,23 @@ def get_back_keyboard():
     return InlineKeyboardMarkup([
         [InlineKeyboardButton("⬅️ Назад", callback_data="go:menu")]
     ])
+
+def get_analysis_history_keyboard(history):
+    keyboard = []
+
+    for item in history[-10:]:
+        mode = item["mode"]
+        item_id = item["id"]
+
+        keyboard.append([
+            InlineKeyboardButton(
+                text=get_mode_title(mode),
+                callback_data=f"analysis_item:{item_id}"
+            )
+        ])
+
+    keyboard.append([
+        InlineKeyboardButton("⬅️ Назад", callback_data="go:menu")
+    ])
+
+    return InlineKeyboardMarkup(keyboard)
