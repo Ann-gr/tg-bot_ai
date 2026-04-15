@@ -22,6 +22,11 @@ async def analyze_with_ai(messages):
 
         if response.status_code != 200:
             return f"Ошибка {response.status_code}: {response.text}"
+        
+        if response.status_code == 402:
+            payload["max_tokens"] = 500
+
+            response = await client.post(API_URL, headers=headers, json=payload)
 
         try:
             data = response.json()
