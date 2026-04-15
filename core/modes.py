@@ -7,17 +7,10 @@ CRITICAL RULES:
 - Do NOT use JSON
 - Do NOT add explanations outside the required structure
 - Be concise and structured
-- Follow the output format EXACTLY
-- Do NOT copy large parts of the original text
-
-IMPORTANT:
-You MUST strictly follow the output format.
-Do not change section names.
-Do not translate them.
-Do not add any extra text.
-Do not add any design to section headings (#, * or other symbols).
-
-STRICT OUTPUT CONTROL:
+- Follow the output format strictly
+- Do not add sections outside the format
+- Do not use markdown formatting (no #, *, **)
+- Keep formatting plain text only
 - Follow ONLY the requested mode
 - Do NOT include sections from other modes
 - Do NOT add extra sections
@@ -26,6 +19,9 @@ STRICT OUTPUT CONTROL:
 - Do NOT add introductions or conclusions
 - Do NOT explain what you are doing
 - NEVER mix languages
+
+FINAL RULE:
+The answer must be clean plain text without markdown or decorations.
 
 TEXT:
 {text}

@@ -54,3 +54,19 @@ async def get_analysis_by_id(analysis_id):
         )
 
     return row["result"] if row else None
+
+async def get_analysis_by_id_for_user(user_id, analysis_id):
+    pool = await get_pool()
+
+    async with pool.acquire() as conn:
+        row = await conn.fetchrow(
+            """
+            SELECT id, mode, result
+            FROM analysis_results
+            WHERE id = $1 AND user_id = $2
+            """,
+            analysis_id,
+            str(user_id)
+        )
+
+    return row

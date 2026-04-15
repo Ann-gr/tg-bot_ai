@@ -13,7 +13,7 @@ from handlers.keyboards import (
     get_history_menu
 )
 from services.analysis_flow import process_user_input
-from services.analysis_repository import get_user_analysis, hide_all_analysis, get_analysis_by_id
+from services.analysis_repository import get_user_analysis, hide_all_analysis, get_analysis_by_id, get_analysis_by_id_for_user
 from services.qa_repository import get_user_qa, hide_all_qa
 from state import state_manager
 from state.state_manager import resolve_ui_state
@@ -258,9 +258,7 @@ async def handle_action(query, context, user_id, state, payload):
 async def handle_analysis_item(query, context, user_id, state, payload):
     item_id = payload[0]
 
-    history = await get_user_analysis(user_id)
-
-    item = next((x for x in history if x["id"] == item_id), None)
+    item = await get_analysis_by_id_for_user(user_id, item_id)
 
     if not item:
         await query.edit_message_text(

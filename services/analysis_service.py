@@ -12,6 +12,10 @@ async def run_analysis(user_id, text, state):
     question = state.get("question", None)
     qa_history = state.get("qa_history", [])
 
+    MAX_PROMPT_TEXT = 12000
+    if len(text) > MAX_PROMPT_TEXT:
+        text = text[:MAX_PROMPT_TEXT]
+
     prompt = create_prompt(
         text,
         mode,
@@ -24,11 +28,6 @@ async def run_analysis(user_id, text, state):
     messages = [
         {"role": "system", "content": "You are a precise text analysis assistant. Always respond in Russian"},
     ]
-
-    # история диалога
-    for item in qa_history:
-        messages.append({"role": "user", "content": item["q"]})
-        messages.append({"role": "assistant", "content": item["a"]})
 
     # текущий запрос
     messages.append({"role": "user", "content": prompt})
