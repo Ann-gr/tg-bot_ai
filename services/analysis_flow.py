@@ -25,10 +25,9 @@ async def process_user_input(user_id, state, new_text=None, user_question=None):
     # достаём текст
     text = await get_text(state["current_text_id"])
 
-    analysis_id = None
-
     # QA режим
     if state.get("mode") == "qa":
+        analysis_id = None
         result = await run_analysis(user_id, text, state)
         # сохраняем в историю состояния
         qa_history = state.get("qa_history", [])

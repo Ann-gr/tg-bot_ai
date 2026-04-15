@@ -207,10 +207,19 @@ async def handle_action(query, context, user_id, state, payload):
         )
 
     elif action == "short_result":
+        full_text = await get_analysis_by_id(state.get("last_result_id"))
+
+        if not full_text:
+            await query.edit_message_text(
+                "❌ Нет результата",
+                reply_markup=get_back_keyboard()
+            )
+            return
+        
         state["result_view"] = "short"
         await state_manager.update_state(user_id, **state)
 
-        short_text, is_truncated = shorten_text(state.get("last_result"))
+        short_text, is_truncated = shorten_text(full_text)
 
         title = get_mode_title(state.get("mode"))
 
