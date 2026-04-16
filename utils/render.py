@@ -19,5 +19,5 @@ async def render_result(edit_func, state, text):
 
     await edit_func(
         message,
-        reply_markup=get_result_keyboard(state.get("result_view"), is_truncated)
+        reply_markup=get_result_keyboard(state.get("result_view"), is_truncated, state.get("mode"))
     )

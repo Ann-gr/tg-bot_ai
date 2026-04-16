@@ -3,15 +3,13 @@ import os
 from telegram import Update
 from telegram.ext import ContextTypes
 
-from handlers.keyboards import get_modes_keyboard, get_result_keyboard
+from handlers.keyboards import get_modes_keyboard
 from state import state_manager
 
 from services.file_service import extract_text_from_file, FileProcessingError
 from services.analysis_flow import process_user_input
 from services.text_repository import save_text
 
-from utils.mode_utils import get_mode_title
-from utils.text_utils import shorten_text
 from utils.render import render_result
 
 MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
@@ -31,7 +29,11 @@ async def handle_message(update, context):
     )
 
     # Если режим QA и мы ожидаем вопрос
-    if state.get("mode") == "qa" and state.get("current_text_id"):
+    if state.get("mode") == "qa":
+        if not state.get("current_text_id"):
+            await loading_msg.edit_text("❌ Сначала загрузите текст")
+            return
+        
         data = await process_user_input(user_id, state, user_question=text)
     else:
         data = await process_user_input(user_id, state, new_text=text)

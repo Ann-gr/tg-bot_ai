@@ -230,13 +230,13 @@ async def handle_action(query, context, user_id, state, payload):
 
         await query.edit_message_text(
             f"{title}\n\n{short_text}",
-            reply_markup=get_result_keyboard("short", is_truncated),
+            reply_markup=get_result_keyboard("short", is_truncated, state.get("mode")),
         )
 
     elif action == "full_result":
-        full_text = None
+        full_text = state.get("last_result")
 
-        if state.get("last_result_id"):
+        if not full_text and state.get("last_result_id"):
             full_text = await get_analysis_by_id(state.get("last_result_id"))
 
         if not full_text:
@@ -292,7 +292,7 @@ async def show_menu(query, state):
     elif ui == "RESULT":
         await query.edit_message_text(
             "📊 Выберите действие:",
-            reply_markup=get_result_keyboard()
+            reply_markup=get_result_keyboard(mode=state.get("mode"))
         )
 
     elif ui == "QA":
@@ -317,7 +317,6 @@ async def run_and_show_result(query, user_id, state):
     result = data["result"]
 
     state = data["state"]
-    state["question"] = None
     state["ui_state"] = "RESULT"
     state["result_view"] = "short"
     state["last_result"] = result

@@ -39,7 +39,7 @@ def get_param_keyboard(mode):
 
     return InlineKeyboardMarkup(keyboard)
 
-def get_result_keyboard(result_view="short", is_truncated=False):
+def get_result_keyboard(result_view="short", is_truncated=False, mode=None):
     keyboard = []
 
     if is_truncated:
@@ -52,10 +52,14 @@ def get_result_keyboard(result_view="short", is_truncated=False):
                 InlineKeyboardButton("🔼 Свернуть", callback_data="action:short_result")
             ])
 
+    if mode != "qa":
+        keyboard.append([
+            InlineKeyboardButton("🔁 Повторить", callback_data="action:repeat")
+        ])
+
     keyboard.extend([
         [
             InlineKeyboardButton("💬 Задать вопрос по тексту", callback_data="action:ask_more"),
-            InlineKeyboardButton("🔁 Повторить", callback_data="action:repeat")
         ],
         [
             InlineKeyboardButton("⚙️ Выбрать другой режим", callback_data="action:change_mode"),
@@ -81,7 +85,7 @@ def get_analysis_history_keyboard(history):
     visible_history = history
 
     for item in visible_history[-10:]:
-        preview = item["result"][:40].replace("\n", " ")
+        preview = (item.get("result") or "")[:40].replace("\n", " ")
 
         keyboard.append([
             InlineKeyboardButton(

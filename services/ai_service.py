@@ -11,7 +11,7 @@ async def analyze_with_ai(messages):
     payload = {
         "model": MODEL,
         "messages": messages,
-        "max_tokens": 1000 if len(messages) > 5 else 1500
+        "max_tokens": 500 if len(messages) <= 2 else 800
     }
 
     try:
@@ -20,13 +20,14 @@ async def analyze_with_ai(messages):
             logger = logging.getLogger(__name__)
             logger.info(f"AI status: {response.status_code}") # логирование
 
+        if response.status_code == 402:
+            payload["max_tokens"] = 300
+
+            async with httpx.AsyncClient(timeout=15) as client:
+                response = await client.post(API_URL, headers=headers, json=payload)
+
         if response.status_code != 200:
             return f"Ошибка {response.status_code}: {response.text}"
-        
-        if response.status_code == 402:
-            payload["max_tokens"] = 500
-
-            response = await client.post(API_URL, headers=headers, json=payload)
 
         try:
             data = response.json()
