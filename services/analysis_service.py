@@ -10,12 +10,19 @@ async def run_analysis(user_id, text, state, user_question=None):
     params = state.get("params", {})
     n = params.get("n", 10)
 
+    MAX_AI_TEXT = 3000
+
+    if len(text) > MAX_AI_TEXT:
+        text = text[:MAX_AI_TEXT]
+
+
     # QA режим
     if mode == "qa":
         prompt = create_prompt(
             text,
             mode,
-            question=user_question
+            question=user_question,
+            qa_history=state.get("qa_history", [])
         )
 
         messages = [

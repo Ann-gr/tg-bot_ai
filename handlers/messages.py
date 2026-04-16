@@ -13,7 +13,7 @@ from services.text_repository import save_text
 from utils.render import render_result
 
 MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
-MAX_TEXT_LENGTH = 20000
+MAX_TEXT_LENGTH = 8000
 
 SUPPORTED_FORMATS = (".txt", ".pdf", ".docx")
 

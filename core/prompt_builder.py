@@ -3,19 +3,20 @@ def create_prompt(text, mode="analysis", **kwargs):
     config = MODE_REGISTRY.get(mode, MODE_REGISTRY["analysis"])
 
     base_prompt = BASE_PROMPT.format(text=text)
+    mode_prompt = config["prompt"].format(**kwargs)
 
-    # добавляем историю для QA
+    # QA history (ограниченная)
     if mode == "qa":
         history = kwargs.get("qa_history", [])
 
-        history_text = ""
+        short_history = ""
+        for item in history[-3:]:
+            short_q = item["q"][:100]
+            short_a = item["a"][:200]
 
-        for item in history[-5:]:
-            history_text += f"\nВопрос: {item['q']}\nОтвет: {item['a']}\n"
+            short_history += f"\nQ: {short_q}\nA: {short_a}\n"
 
-        if history_text:
-            base_prompt += f"\n\nPREVIOUS QA:\n{history_text}"
-
-    mode_prompt = config["prompt"].format(**kwargs)
+        if short_history:
+            base_prompt += f"\n\nPREVIOUS QA:\n{short_history}"
 
     return base_prompt + "\n" + mode_prompt
